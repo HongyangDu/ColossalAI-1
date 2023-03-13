@@ -55,31 +55,14 @@ conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit
 pip install transformers diffusers invisible-watermark
 ```
 
-#### Step 2: install lightning
-
-Install Lightning version later than 2022.01.04. We suggest you install lightning from source.
-
-##### From Source
-```
-git clone https://github.com/Lightning-AI/lightning.git
-pip install -r requirements.txt
-python setup.py install
-```
-
-##### From pip
-
-```
-pip install pytorch-lightning
-```
-
-#### Step 3:Install [Colossal-AI](https://colossalai.org/download/) From Our Official Website
+#### Step 2:Install [Colossal-AI](https://colossalai.org/download/) From Our Official Website
 
 ##### From pip
 
 For example, you can install  v0.2.0 from our official website.
 
 ```
-pip install colossalai==0.2.0+torch1.12cu11.3 -f https://release.colossalai.org
+pip install colossalai
 ```
 
 ##### From source
@@ -90,6 +73,12 @@ cd ColossalAI
 
 # install colossalai
 CUDA_EXT=1 pip install .
+```
+
+#### Step 3:Accelerate with flash attention by xformers(Optional)
+
+```
+pip install xformers
 ```
 
 ### Option #2: Use Docker
