@@ -1,4 +1,3 @@
-# this code is inspired by the DeepSpeed library and implemented with our own design from scratch
 from functools import partial
 from typing import Optional
 
@@ -132,10 +131,7 @@ class LowLevelZeroOptimizer(ColossalaiOptimizer):
         # partition these param groups for data parallel training
         # and add buffers to parameter store for future access
         for group_id, param_group in enumerate(self.optim.param_groups):
-            group_params = list()
-            for param in param_group['params']:
-                if param.requires_grad:
-                    group_params.append(param)
+            group_params = param_group['params']
 
             # add the fp16 params to fp16_param_groups for bookkeeping
             self._fp16_param_groups[group_id] = group_params
@@ -417,7 +413,7 @@ class LowLevelZeroOptimizer(ColossalaiOptimizer):
         :param set_to_none: Whether set the gradient to None. Default value is True.
         :type set_to_none: bool
         """
-        for _, param_group in self._fp16_param_groups.items():
+        for group_id, param_group in self._fp16_param_groups.items():
             for param in param_group:
                 if set_to_none:
                     param.grad = None
@@ -439,7 +435,7 @@ class LowLevelZeroOptimizer(ColossalaiOptimizer):
 
         # update loss scale if overflow occurs
         if found_inf:
-            self._grad_store.reset_all_average_gradients()
+            self._grad_store._averaged_gradients = dict()
             self.zero_grad()
             return
 
@@ -449,7 +445,7 @@ class LowLevelZeroOptimizer(ColossalaiOptimizer):
 
         for group_id in range(self.num_param_groups):
             # compute norm
-            norm_group = compute_norm(gradients=self._grad_store.get_averaged_gradients_by_group(group_id),
+            norm_group = compute_norm(gradients=self._grad_store._averaged_gradients[group_id],
                                       params=self._param_store.get_fp16_params_by_rank_group(group_id=group_id,
                                                                                              rank=self._local_rank),
                                       dp_group=self._dp_torch_group,
@@ -470,7 +466,8 @@ class LowLevelZeroOptimizer(ColossalaiOptimizer):
             single_grad_partition_groups.append(flat_fp32_avg_grads)
             device = self._fp32_flat_param_groups_of_current_rank[group_id].device
             self._fp32_flat_param_groups_of_current_rank[group_id].grad = flat_fp32_avg_grads.to(device)
-            self._grad_store.reset_average_gradients_by_group(group_id)
+            self._grad_store._averaged_gradients[group_id] = []
+            self._grad_store._averaged_gradients[group_id] = []
 
         # unscale and clip grads
         global_norm = calculate_global_norm_from_list(norm_list=norm_groups)
@@ -546,22 +543,24 @@ class LowLevelZeroOptimizer(ColossalaiOptimizer):
     def _sync_grad(self):
         # update param already reduced flag
         reduction_states = self._param_store.get_param_reduction_states()
-        for tensor, _ in reduction_states.items():
+        for tensor, state in reduction_states.items():
             reduction_states[tensor] = False
 
         # accumulate gradient
+        avg_gradients = self._grad_store._averaged_gradients
         for group_id in range(self.num_param_groups):
             param_group = self._param_store.get_fp16_params_by_rank_group(self._local_rank, group_id)
 
-            avg_gradients_group = self._grad_store.get_averaged_gradients_by_group(group_id)
+            if group_id not in avg_gradients:
+                avg_gradients[group_id] = []
 
             param_idx = 0
             for param in param_group:
                 if param.grad is not None:
-                    if len(avg_gradients_group) == param_idx:
-                        self._grad_store.append_average_gradient_by_group(group_id, param.grad)
+                    if len(avg_gradients[group_id]) == param_idx:
+                        avg_gradients[group_id].append(param.grad)
                     else:
-                        self._grad_store.add_average_gradient_by_group(group_id, param_idx, param.grad)
+                        avg_gradients[group_id][param_idx].add_(param.grad)
                     param_idx += 1
 
         # the gradients needed are stored in the avg_gradients buffer

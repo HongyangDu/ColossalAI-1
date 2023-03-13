@@ -1,11 +1,6 @@
-# This code has been adapted from the DeepSpeed library.
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
+import torch
 import functools
 from typing import Optional
-
-import torch
 
 
 def substitute_init_recursively(cls, func, visited: set):

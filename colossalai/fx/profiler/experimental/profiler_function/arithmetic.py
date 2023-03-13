@@ -1,12 +1,7 @@
-# Copyright (c) Microsoft Corporation.
-
-# Licensed under the MIT License.
 import operator
 from functools import reduce
 from typing import Any, Optional, Tuple, Union
-
 import torch
-
 from ..registry import meta_profiler_function
 
 

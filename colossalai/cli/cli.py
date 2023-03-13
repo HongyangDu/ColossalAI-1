@@ -1,8 +1,7 @@
 import click
-
-from .benchmark import benchmark
-from .check import check
 from .launcher import run
+from .check import check
+from .benchmark import benchmark
 
 
 class Arguments():

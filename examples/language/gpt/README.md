@@ -19,8 +19,11 @@ conda install pytorch==1.12.0 torchvision==0.13.0 torchaudio==0.12.0 cudatoolkit
 pip install torch==1.12.0+cu113 torchvision==0.13.0+cu113 torchaudio==0.12.0 --extra-index-url https://download.pytorch.org/whl/cu113
 ```
 
-### [Install Colossal-AI](https://github.com/hpcaitech/ColossalAI#installation)
+### Install [Colossal-AI v0.1.12](https://colossalai.org/download/) From Official Website
 
+```bash
+pip install colossalai==0.1.12+torch1.12cu11.3 -f https://release.colossalai.org
+```
 
 ### Install requirements
 
@@ -28,12 +31,12 @@ pip install torch==1.12.0+cu113 torchvision==0.13.0+cu113 torchaudio==0.12.0 --e
 pip install -r requirements.txt
 ```
 
-This is just an example that we download PyTorch=1.12.0, CUDA=11.6 and colossalai. You can download another version of PyTorch and its corresponding ColossalAI version. Just make sure that the version of ColossalAI is at least 0.1.10, PyTorch is at least 1.8.1 and transformers is at least 4.231.
+This is just an example that we download PyTorch=1.12.0, CUDA=11.6 and colossalai=0.1.12+torch1.12cu11.3. You can download another version of PyTorch and its corresponding ColossalAI version. Just make sure that the version of ColossalAI is at least 0.1.10, PyTorch is at least 1.8.1 and transformers is at least 4.231.
 If you want to test ZeRO1 and ZeRO2 in Colossal-AI, you need to ensure Colossal-AI>=0.1.12.
 
 ## Dataset
 
-For simplicity, the input data is randomly generated here.
+For simplicity, the input data is randonly generated here.
 
 ## Training
 We provide two stable solutions.
@@ -51,13 +54,13 @@ However, it requires some efforts to start if facing a new model structure.
 bash run_gemini.sh
 ```
 
-The `train_gpt_demo.py` provides three distributed plans (except ones already provided by PyTorch), you can choose the plan you want in `run_gemini.sh`. The CAI_Gemini leverages Tensor Parallel and Gemini + ZeRO DDP. For their differences, you may check out the answer to issue [here](https://github.com/hpcaitech/ColossalAI/issues/2590#issuecomment-1418766581).
+The `train_gpt_demo.py` provides three distributed plans, you can choose the plan you want in `run_gemini.sh`. The Colossal-AI leverages Tensor Parallel and Gemini + ZeRO DDP.
 
-- ZeRO1 (CAI_ZeRO1)
-- ZeRO2 (CAI_ZeRO2)
-- Gemini + ZeRO DDP (CAI_Gemini)
-- Pytorch DDP (Pytorch_DDP)
-- Pytorch ZeRO (Pytorch_ZeRO)
+- Colossal-AI
+- ZeRO1 (Colossal-AI)
+- ZeRO2 (Colossal-AI)
+- Pytorch DDP
+- Pytorch ZeRO
 
 ### Titans (Tensor Parallelism) + ZeRO + Pipeline Parallelism
 

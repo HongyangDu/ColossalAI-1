@@ -1,8 +1,6 @@
 import click
-
-from colossalai.context import Config
-
 from .run import launch_multi_processes
+from colossalai.context import Config
 
 
 @click.command(help="Launch distributed training on a single node or multiple nodes",

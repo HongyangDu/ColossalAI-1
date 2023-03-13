@@ -226,7 +226,7 @@ class ConcreteInfoProp(torch.fx.Interpreter):
         Returns:
             Any: The value returned from executing the Module
         """
-        return self.run(*args)
+        return super().run(*args)
 
     def summary(self, unit: str = 'MB') -> str:
         """

@@ -1,4 +1,3 @@
-# this code is inspired by the DeepSpeed library and implemented with our own design from scratch
 import math
 import warnings
 from enum import Enum
@@ -137,7 +136,7 @@ class ZeroOptimizer(ColossalaiOptimizer):
         for group in self.param_groups:
             for fake_param in group['params']:
                 assert fake_param.grad is None
-                fake_param.data = none_tensor.to(fake_param.device)
+                fake_param.data = none_tensor
 
         for chunk16 in self.chunk16_set:
             chunk16.optim_update()
@@ -308,8 +307,7 @@ class ZeroOptimizer(ColossalaiOptimizer):
                 if range_pair[0] >= range_pair[1]:
                     continue
 
-                grad_device = self.module.grads_device[param]
-                fake_param = torch.nn.Parameter(torch.empty([0], device=grad_device))
+                fake_param = torch.nn.Parameter(torch.empty([0]))
                 self.param_to_chunk32[fake_param] = chunk16.paired_chunk
                 self.param_to_range[fake_param] = range_pair
 

@@ -32,7 +32,7 @@ def _convert_to_coloparam(param: torch.nn.Parameter,
                           default_pg: Optional[ProcessGroup] = None,
                           default_dist_spec: Optional[Any] = None) -> ColoParameter:
 
-    if type(param) is ColoParameter:
+    if isinstance(param, ColoParameter):
         return param
     # detaching tensor is necessary for optimizers.
     requires_grad = param.requires_grad
@@ -102,7 +102,7 @@ class ColoInitContext(InsertPostInitMethodToModuleSubClasses):
         """
         name_list = []
         for name, param in _named_params_with_replica(module):
-            if type(param) is ColoParameter:
+            if isinstance(param, ColoTensor):
                 continue
 
             split = name.rfind('.')

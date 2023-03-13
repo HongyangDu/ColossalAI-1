@@ -1,7 +1,7 @@
-# this code is inspired by the DeepSpeed library and implemented with our own design from scratch
-from abc import ABC, abstractmethod
-from typing import Callable, List, Optional
+import torch
+from typing import List, Callable, Optional
 
+from abc import ABC, abstractmethod
 import torch
 
 

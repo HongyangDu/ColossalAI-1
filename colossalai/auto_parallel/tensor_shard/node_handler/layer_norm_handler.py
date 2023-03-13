@@ -3,7 +3,7 @@ from typing import Dict, List
 import torch
 
 from ..sharding_strategy import OperationData, OperationDataType
-from .node_handler import MetaInfoModuleHandler, ModuleHandler
+from .node_handler import ModuleHandler
 from .registry import operator_registry
 from .strategy import LayerNormGenerator, StrategyGenerator
 
@@ -11,7 +11,7 @@ __all__ = ['LayerNormModuleHandler']
 
 
 @operator_registry.register(torch.nn.LayerNorm)
-class LayerNormModuleHandler(MetaInfoModuleHandler):
+class LayerNormModuleHandler(ModuleHandler):
     """
     A LayerNormModuleHandler which deals with the sharding strategies for nn.LayerNorm module.
     """
