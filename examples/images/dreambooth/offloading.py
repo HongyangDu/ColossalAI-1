@@ -14,31 +14,82 @@ def seed_everywhere(seed):
 # Previous model from hug face
 model_id = "CompVis/stable-diffusion-v1-4"
 # pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16).to("cpu")
-pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16).to("cuda:0")
+pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float32).to("cuda:0")
 # ====================================================
-seed =1
+
 # seed = np.random.randint(100)
 # print(seed)
-seed_everywhere(seed)
 
-step = 30
-off_step = 5
+seed = 41
+seed_everywhere(seed)
+step = 15
+off_step = 4
 scale = 7.5
 savepath = "Offload/seed"+str(seed)+"step"+str(step)
 # ss: use the offloading or not
 # tt: the offloading processing point
-
-prompt = "A cup on the desk"
-image = pipe(prompt, num_inference_steps= step, tt= off_step, ss=True, guidance_scale=scale).images[0]
+seed_everywhere(seed)
+prompt = "A cup on a book"
+image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=True, guidance_scale=scale).images[0]
 image.save(savepath + prompt + "_final.png")
 
-# prompt = "A Photo of bird on the desk"
-# image = pipe(prompt, num_inference_steps= step, tt= off_step, ss=False, guidance_scale=scale).images[0]
-# image.save(savepath + prompt + "_final.png")
-#
-# prompt = "A Photo of dog on the bed"
-# image = pipe(prompt, num_inference_steps= step, tt= off_step, ss=False, guidance_scale=scale).images[0]
-# image.save(savepath + prompt + "_final.png")
+seed_everywhere(seed)
+prompt = "A tree near the river"
+image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+image.save(savepath + prompt + str(off_step) + "_final.png")
 
+# while off_step < step:
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Apple on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=True, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + "_final.png")
+#
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Lemon on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + str(off_step) + "_final.png")
+#
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Nectarine on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + str(off_step) + "_final.png")
+#
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Plum on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + str(off_step) + "_final.png")
+#
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Quince on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + str(off_step) + "_final.png")
+#
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Blueberry on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + str(off_step) + "_final.png")
+#
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Kiwi fruit on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + str(off_step) + "_final.png")
+#
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Persimmon on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + str(off_step) + "_final.png")
+#
+#     seed_everywhere(seed)
+#     prompt = "Photo of One Apricot on Table"
+#     image = pipe(prompt, num_inference_steps=step, tt=off_step, ss=False, guidance_scale=scale).images[0]
+#     image.save(savepath + prompt + str(off_step) + "_final.png")
+#
+#     off_step += 1
+
+
+
+# prompt = "A cup on the desk"
+# image = pipe(prompt, num_inference_steps= step, tt= off_step, ss=True, guidance_scale=scale).images[0]
+# image.save(savepath + prompt + "_final.png")
 
 
